@@ -13,6 +13,16 @@ class _LoginUiState extends State<LoginUi> {
   TextEditingController userPassCtrl = TextEditingController();
   bool _isVisible = false;
 
+   showWarningSnackBar(context, message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -127,16 +137,38 @@ class _LoginUiState extends State<LoginUi> {
                         height: 50,
                         color: Colors.brown,
                         child: TextButton(
-                          onPressed: (){
-                          Navigator.push(context,MaterialPageRoute(builder:(context) => HomeUi()));
-                          }, 
-                          child: Text('เข้าใช้งาน',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                          ),),
-                        ),
-                      ), 
+                         onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        User user = User(
+                          userName: userNameCtrl.text.trim(),
+                          userPassword: userPassCtrl.text.trim(),
+                        );
+
+                        user = await UserApi().loginUser(user);
+
+                        if (user.userId != null) {
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => HomeUi(
+                                    userName: user.userFullname,
+                                    userImage: user.userImage,
+                                    userId: int.parse(user.userId.toString()),
+                                  ),
+                            ),
+                            (Route<dynamic> route) => false,
+                          );
+                        } else if (user.userName != userNameCtrl.text.trim() ||
+                            user.userPassword != userPassCtrl.text.trim()) {
+                          showWarningSnackBar(
+                            context,
+                            'ชื่อและรหัสผ่านไม่ถูกต้อง',
+                          );
+                        }
+                      }
+                    },
+                        )  ), 
                     ]), 
                     ),
           ),    
