@@ -81,6 +81,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.8"
+  custom_text_form_field:
+    dependency: "direct main"
+    description:
+      name: custom_text_form_field
+      sha256: "9ecbdff820bf9517e687689a622e04cd6d2d2f8b8c0ec59430c175162602a5d1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.6"
   dio:
     dependency: "direct main"
     description:
